@@ -1,0 +1,26 @@
+.input {
+  bottom: 10px;
+}
+.message {
+  height: "83%";
+}
+.mainContainer {
+  height: 95vh;
+  width: 100%;
+  bottom: 0;
+  padding-bottom: 0;
+}
+@media screen and (max-width: 480px) {
+  .message {
+    height: "80%";
+  }
+  .input {
+    bottom: 90px;
+  }
+  .mainContainer {
+    height: 90vh;
+    width: 100%;
+    bottom: 0;
+    padding-bottom: 0;
+  }
+}
