@@ -37,7 +37,7 @@ export default function Home() {
 
         sender: "User",
 
-        direction: "incoming",
+        direction: "outgoing",
 
         position: "last",
       })
@@ -45,11 +45,10 @@ export default function Home() {
     try {
       setLoading(true);
       let data = await axios.post(
-        "https://payoneer.gsoftconsulting.com/payoneer",
+        "https://ad35-39-55-227-153.ngrok-free.app/utahchat",
         {
-          question: message,
+          message: message,
         },
-
         {
           auth: {
             username: "user",
@@ -63,13 +62,17 @@ export default function Home() {
         }
       );
       console.log("data", data);
+      if (data.data.response == "Chat deleted from server!") {
+        setMessage([]);
+      }
       setMessage((prv) =>
         prv.concat({
-          message: data.data,
+          message: data.data.response,
           sentTime: "now",
           sender: "User",
-          direction: "outgoing",
+          direction: "incoming",
           position: "last",
+          sender: "Akane",
         })
       );
     } catch (error) {
@@ -114,7 +117,9 @@ export default function Home() {
             >
               {/* <MessageSeparator content="Saturday, 30 November 2019" /> */}
               {message.map((data, index) => (
-                <Message model={data} key={index} />
+                <Message model={data} key={index}>
+                  <Avatar src={`./chatBotLogo.png`} name="Akane" />
+                </Message>
               ))}
             </MessageList>
             <MessageInput
