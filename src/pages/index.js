@@ -13,21 +13,27 @@ import {
   InfoButton,
   TypingIndicator,
   MessageSeparator,
+  Button,
 } from "@chatscope/chat-ui-kit-react";
 import { useState } from "react";
 import axios from "axios";
+import Image from "next/image";
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState([
     {
-      message: "Wellcome to AI Assistant chat bot support ",
+      message: "Welcome to AI Assistant chat bot support. ",
       sentTime: "now",
       sender: "AI Assistant bot",
       direction: "incoming",
       position: "single",
     },
   ]);
+
+  const resetChat = () => {
+    onSendMessage("Reset");
+  };
   const onSendMessage = async (message) => {
     console.log("message", message);
     setMessage((prv) =>
@@ -104,6 +110,10 @@ export default function Home() {
                 userName="AI Assistant"
                 info="online"
               />
+              <ConversationHeader.Actions>
+                {/* <Button border>Reset Chat</Button> */}
+                <Button onClick={resetChat}>Reset Chat</Button>
+              </ConversationHeader.Actions>
             </ConversationHeader>
             <MessageList
               style={{ height: "83%" }}
