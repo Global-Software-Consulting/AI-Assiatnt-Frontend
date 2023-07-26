@@ -21,6 +21,7 @@ import Image from "next/image";
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
+  const [isFirstRender, setFirstRender] = useState(true);
   const [message, setMessage] = useState([
     {
       message: "Welcome to AI Assistant chat bot support. ",
@@ -51,9 +52,11 @@ export default function Home() {
     try {
       setLoading(true);
       let data = await axios.post(
-        "https://ad35-39-55-227-153.ngrok-free.app/utahchat",
+        "http://15.222.236.105/utahchat",
         {
           message: message,
+          user_id: isFirstRender ? "1" : "0",
+          new_chat: "0",
         },
         {
           auth: {
@@ -85,6 +88,7 @@ export default function Home() {
       console.log("error", error);
     } finally {
       setLoading(false);
+      setFirstRender(false);
     }
   };
   return (
