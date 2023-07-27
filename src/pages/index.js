@@ -22,6 +22,8 @@ import Image from "next/image";
 export default function Home() {
   const [loading, setLoading] = useState(false);
   const [isFirstRender, setFirstRender] = useState(true);
+  const [value, setValue] = useState("");
+
   const [message, setMessage] = useState([
     {
       message: "Welcome to AI Assistant chat bot support. ",
@@ -37,6 +39,7 @@ export default function Home() {
   };
   const onSendMessage = async (message) => {
     console.log("message", message);
+    setValue("");
     setMessage((prv) =>
       prv.concat({
         message: message,
@@ -136,10 +139,17 @@ export default function Home() {
                 </Message>
               ))}
             </MessageList>
+            <input />
             <MessageInput
               placeholder="Type message here"
               attachButton={false}
               onSend={onSendMessage}
+              onChange={(val) => setValue(val)}
+              value={value}
+              onPaste={(evt) => {
+                evt.preventDefault();
+                setValue(evt.clipboardData.getData("text"));
+              }}
             />
           </ChatContainer>
         </div>
