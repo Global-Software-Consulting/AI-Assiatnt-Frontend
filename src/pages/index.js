@@ -55,7 +55,7 @@ export default function Home() {
     try {
       setLoading(true);
       let data = await axios.post(
-        "http://15.222.236.105/utahchat",
+        "https://datancare.com/api/utahchat",
         {
           message: message,
           user_id: isFirstRender ? "1" : "0",
