@@ -20,7 +20,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 
-export default function Home() {
+export default function Home({ statusMessage, userId }) {
   const [loading, setLoading] = useState(false);
   const [isFirstRender, setFirstRender] = useState(true);
   const firstRender = useRef(true);
@@ -36,61 +36,21 @@ export default function Home() {
     onSendMessage("Reset");
   };
 
-  const getWelcomeMsg = async (msg) => {
-    console.log("im called 1");
-    try {
-      setLoading(true);
-      let data = await axios.post(
-        "https://datancare.com/api/utahchat",
-        {
-          message: msg,
-          user_id: "1",
-          new_chat: "1",
-        },
-        {
-          auth: {
-            username: "user",
-            password: "soft",
-          },
-          headers: {
-            Accept: "application/json",
-            "Content-type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
-      );
-      console.log("data", data);
-
-      const searchText = "Chat deleted from server!";
-      if (data.data.response.includes(searchText)) {
-        let response = data.data.response.replace(searchText, "");
-        console.log({ response });
-        setMessage((prv) =>
-          prv.concat({
-            message: response,
-            sentTime: "now",
-            sender: "User",
-            direction: "incoming",
-            position: "last",
-            sender: "Akane",
-          })
-        );
-      }
-    } catch (error) {
-      console.log("error", error);
-    } finally {
-      setLoading(false);
-      setFirstRender(false);
-    }
-  };
-
   useEffect(() => {
-    if (firstRender.current === true) {
-      getWelcomeMsg("good day");
-      firstRender.current = false;
-      console.log("areeb", firstRender.current);
+    if (statusMessage == "") {
+      return;
     }
-  }, [firstRender.current]);
+    setMessage([
+      {
+        message: statusMessage,
+        sentTime: "now",
+        sender: "User",
+        direction: "incoming",
+        position: "last",
+        sender: "Akane",
+      },
+    ]);
+  }, []);
 
   const onSendMessage = async (message) => {
     console.log("im called 2");
@@ -115,7 +75,7 @@ export default function Home() {
         "https://datancare.com/api/utahchat",
         {
           message: message,
-          user_id: "1",
+          user_id: userId,
           new_chat: "0",
         },
         {
@@ -227,3 +187,53 @@ export default function Home() {
     </>
   );
 }
+
+export async function getServerSideProps() {
+  // Fetch data from external API
+  try {
+    const timestamp = Date.now().toString(36); // Convert current time to base36 string
+    const randomString = Math.random().toString(36).substr(2, 5); // Generate random string
+    const uniqueId = timestamp + randomString; // Concatenate the timestamp and random string
+
+    let data = await getWelcomeMsg("good day", uniqueId);
+    console.log("datadatadata", data);
+    return { props: { statusMessage: data, userId: uniqueId } };
+  } catch (error) {
+    return { props: { statusMessage: "", userId: uniqueId } };
+  }
+  // Pass data to the page via props
+}
+
+const getWelcomeMsg = async (msg, userId) => {
+  console.log("im called 1");
+  try {
+    let data = await axios.post(
+      "https://datancare.com/api/utahchat",
+      {
+        message: msg,
+        user_id: userId,
+        new_chat: "1",
+      },
+      {
+        auth: {
+          username: "user",
+          password: "soft",
+        },
+        headers: {
+          Accept: "application/json",
+          "Content-type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+      }
+    );
+    const searchText = "Chat deleted from server!";
+    if (data.data.response.includes(searchText)) {
+      let response = data.data.response.replace(searchText, "");
+      return response;
+    }
+    return data.data.response;
+  } catch (error) {
+    console.log("error", error);
+    return "";
+  }
+};
