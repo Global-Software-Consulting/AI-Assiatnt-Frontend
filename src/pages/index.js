@@ -38,6 +38,7 @@ export default function Home({ statusMessage, userId }) {
   const resetChat = () => {
     // firstRender.current = true;
     // setFirstRender(true);
+    setSelectedBtn("");
     onSendMessage("Reset");
   };
 
@@ -58,6 +59,9 @@ export default function Home({ statusMessage, userId }) {
   }, []);
 
   const onSendMessage = async (message) => {
+    if (message.toLowerCase() == "reset") {
+      setSelectedBtn("");
+    }
     console.log("message", message);
     setValue("");
     setMessage((prv) =>
@@ -75,7 +79,7 @@ export default function Home({ statusMessage, userId }) {
     try {
       setLoading(true);
       let data = await axios.post(
-        "https://datancare.com/api/utahchat",
+        "https://b705-39-55-251-71.ngrok-free.app/utahchat",
         {
           message: message,
           user_id: userId,
@@ -147,7 +151,7 @@ export default function Home({ statusMessage, userId }) {
     // );
     try {
       let data = await axios.post(
-        "https://datancare.com/api/utahchat",
+        "https://b705-39-55-251-71.ngrok-free.app/utahchat",
         {
           message: message,
           user_id: userId,
@@ -319,7 +323,7 @@ const getWelcomeMsg = async (msg, userId) => {
   console.log("im called 1");
   try {
     let data = await axios.post(
-      "https://datancare.com/api/utahchat",
+      "https://b705-39-55-251-71.ngrok-free.app/utahchat",
       {
         message: msg,
         user_id: userId,
