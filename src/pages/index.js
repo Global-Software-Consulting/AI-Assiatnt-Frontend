@@ -165,6 +165,16 @@ export default function Home({ statusMessage, userId }) {
           },
         }
       );
+      setMessage((prv) =>
+        prv.concat({
+          message: data.data.response,
+          sentTime: "now",
+          sender: "User",
+          direction: "incoming",
+          position: "last",
+          sender: "Akane",
+        })
+      );
       console.log("data", data);
     } catch (error) {
       console.log("error", error);
@@ -191,20 +201,62 @@ export default function Home({ statusMessage, userId }) {
         }}
       >
         <div className="mainContainer">
+          <ConversationHeader>
+            <Avatar src={"./chatBotLogo.png"} name="AI-Assistant Bot" />
+            <ConversationHeader.Content userName="AI Assistant" info="online" />
+            <ConversationHeader.Actions>
+              {/* <Button border>Reset Chat</Button> */}
+              <Button onClick={resetChat}>Reset Chat</Button>
+            </ConversationHeader.Actions>
+          </ConversationHeader>
+          {
+            <>
+              <Message model={message[0]}>
+                <Avatar src={`./chatBotLogo.png`} name="Akane" />
+              </Message>
+              <div
+                style={{
+                  width: "100%",
+                  textAlign: "center",
+                  paddingBottom: "20px",
+                }}
+              >
+                <h3>What do you want to search?</h3>
+
+                <LoadingButton
+                  sx={{ margin: "2px" }}
+                  loading={
+                    buttonLoading && selectedBtn == "general-query"
+                      ? true
+                      : false
+                  }
+                  variant={
+                    selectedBtn == "general-query" ? "contained" : "outlined"
+                  }
+                  onClick={() => onSelectOption("general-query")}
+                >
+                  General Query
+                </LoadingButton>
+
+                <LoadingButton
+                  sx={{ margin: "2px" }}
+                  loading={
+                    buttonLoading && selectedBtn == "dr-information"
+                      ? true
+                      : false
+                  }
+                  variant={
+                    selectedBtn == "dr-information" ? "contained" : "outlined"
+                  }
+                  onClick={() => onSelectOption("dr-information")}
+                >
+                  Dr Information
+                </LoadingButton>
+              </div>
+            </>
+          }
           <ChatContainer>
-            <ConversationHeader>
-              <Avatar src={"./chatBotLogo.png"} name="AI-Assistant Bot" />
-              <ConversationHeader.Content
-                userName="AI Assistant"
-                info="online"
-              />
-              <ConversationHeader.Actions>
-                {/* <Button border>Reset Chat</Button> */}
-                <Button onClick={resetChat}>Reset Chat</Button>
-              </ConversationHeader.Actions>
-            </ConversationHeader>
             <MessageList
-              style={{ height: "83%" }}
               typingIndicator={
                 loading ? (
                   <TypingIndicator content={"AI Assistant is typing"} />
@@ -217,56 +269,7 @@ export default function Home({ statusMessage, userId }) {
               {message.map((data, index) => {
                 console.log({ index });
                 if (index == 0) {
-                  return (
-                    <>
-                      <Message model={data} key={index}>
-                        <Avatar src={`./chatBotLogo.png`} name="Akane" />
-                      </Message>
-                      <div
-                        style={{
-                          width: "100%",
-                          textAlign: "center",
-                          paddingBottom: "20px",
-                        }}
-                      >
-                        <h3>What do you want to search?</h3>
-
-                        <LoadingButton
-                          sx={{ margin: "2px" }}
-                          loading={
-                            buttonLoading && selectedBtn == "general-query"
-                              ? true
-                              : false
-                          }
-                          variant={
-                            selectedBtn == "general-query"
-                              ? "contained"
-                              : "outlined"
-                          }
-                          onClick={() => onSelectOption("general-query")}
-                        >
-                          General Query
-                        </LoadingButton>
-
-                        <LoadingButton
-                          sx={{ margin: "2px" }}
-                          loading={
-                            buttonLoading && selectedBtn == "dr-information"
-                              ? true
-                              : false
-                          }
-                          variant={
-                            selectedBtn == "dr-information"
-                              ? "contained"
-                              : "outlined"
-                          }
-                          onClick={() => onSelectOption("dr-information")}
-                        >
-                          Dr Information
-                        </LoadingButton>
-                      </div>
-                    </>
-                  );
+                  return;
                 } else {
                   return (
                     <Message model={data} key={index}>
