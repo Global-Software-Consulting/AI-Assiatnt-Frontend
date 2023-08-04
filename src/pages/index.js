@@ -19,6 +19,8 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
+import LoadingButton from "@mui/lab/LoadingButton";
+import SaveIcon from "@mui/icons-material/Save";
 
 export default function Home({ statusMessage, userId }) {
   const [loading, setLoading] = useState(false);
@@ -228,28 +230,40 @@ export default function Home({ statusMessage, userId }) {
                         }}
                       >
                         <h3>What do you want to search?</h3>
-                        <Button
-                          border
-                          style={{
-                            backgroundColor:
-                              selectedBtn == "dr-information" ? "blue" : "",
-                            padding: "10px 20px",
-                          }}
+
+                        <LoadingButton
+                          sx={{ margin: "2px" }}
+                          loading={
+                            buttonLoading && selectedBtn == "general-query"
+                              ? true
+                              : false
+                          }
+                          variant={
+                            selectedBtn == "general-query"
+                              ? "contained"
+                              : "outlined"
+                          }
+                          onClick={() => onSelectOption("general-query")}
+                        >
+                          General Query
+                        </LoadingButton>
+
+                        <LoadingButton
+                          sx={{ margin: "2px" }}
+                          loading={
+                            buttonLoading && selectedBtn == "dr-information"
+                              ? true
+                              : false
+                          }
+                          variant={
+                            selectedBtn == "dr-information"
+                              ? "contained"
+                              : "outlined"
+                          }
                           onClick={() => onSelectOption("dr-information")}
                         >
                           Dr Information
-                        </Button>
-                        <Button
-                          style={{
-                            backgroundColor:
-                              selectedBtn == "general-query" ? "blue" : "",
-                            padding: "10px 20px",
-                          }}
-                          border
-                          onClick={() => onSelectOption("general-query")}
-                        >
-                          General Query{" "}
-                        </Button>
+                        </LoadingButton>
                       </div>
                     </>
                   );
