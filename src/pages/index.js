@@ -23,6 +23,9 @@ import Image from "next/image";
 export default function Home({ statusMessage, userId }) {
   const [loading, setLoading] = useState(false);
   const [isFirstRender, setFirstRender] = useState(true);
+  const [isDisable, setDisable] = useState(true);
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [selectedBtn, setSelectedBtn] = useState("");
   const firstRender = useRef(true);
   console.log(firstRender);
 
@@ -53,8 +56,6 @@ export default function Home({ statusMessage, userId }) {
   }, []);
 
   const onSendMessage = async (message) => {
-    console.log("im called 2");
-
     console.log("message", message);
     setValue("");
     setMessage((prv) =>
@@ -124,6 +125,54 @@ export default function Home({ statusMessage, userId }) {
       setFirstRender(false);
     }
   };
+
+  const onSelectOption = async (message) => {
+    setSelectedBtn(message);
+    setButtonLoading(true);
+    setDisable(false);
+    console.log("message", message);
+    // setMessage((prv) =>
+    //   prv.concat({
+    //     message: message,
+    //     sentTime: "now",
+
+    //     sender: "User",
+
+    //     direction: "outgoing",
+
+    //     position: "last",
+    //   })
+    // );
+    try {
+      let data = await axios.post(
+        "https://datancare.com/api/utahchat",
+        {
+          message: message,
+          user_id: userId,
+          new_chat: "0",
+        },
+        {
+          auth: {
+            username: "user",
+            password: "soft",
+          },
+          headers: {
+            Accept: "application/json",
+            "Content-type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
+      console.log("data", data);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setLoading(false);
+      setFirstRender(false);
+      setButtonLoading(false);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -163,16 +212,61 @@ export default function Home({ statusMessage, userId }) {
               }
             >
               {/* <MessageSeparator content="Saturday, 30 November 2019" /> */}
-              {message.map((data, index) => (
-                <Message model={data} key={index}>
-                  <Avatar src={`./chatBotLogo.png`} name="Akane" />
-                </Message>
-              ))}
+              {message.map((data, index) => {
+                console.log({ index });
+                if (index == 0) {
+                  return (
+                    <>
+                      <Message model={data} key={index}>
+                        <Avatar src={`./chatBotLogo.png`} name="Akane" />
+                      </Message>
+                      <div
+                        style={{
+                          width: "100%",
+                          textAlign: "center",
+                          paddingBottom: "20px",
+                        }}
+                      >
+                        <h3>What do you want to search?</h3>
+                        <Button
+                          border
+                          style={{
+                            backgroundColor:
+                              selectedBtn == "dr-information" ? "blue" : "",
+                            padding: "10px 20px",
+                          }}
+                          onClick={() => onSelectOption("dr-information")}
+                        >
+                          Dr Information
+                        </Button>
+                        <Button
+                          style={{
+                            backgroundColor:
+                              selectedBtn == "general-query" ? "blue" : "",
+                            padding: "10px 20px",
+                          }}
+                          border
+                          onClick={() => onSelectOption("general-query")}
+                        >
+                          General Query{" "}
+                        </Button>
+                      </div>
+                    </>
+                  );
+                } else {
+                  return (
+                    <Message model={data} key={index}>
+                      <Avatar src={`./chatBotLogo.png`} name="Akane" />
+                    </Message>
+                  );
+                }
+              })}
             </MessageList>
             <input />
             <MessageInput
               placeholder="Type message here"
               attachButton={false}
+              disabled={isDisable}
               onSend={onSendMessage}
               onChange={(val) => setValue(val)}
               value={value}
